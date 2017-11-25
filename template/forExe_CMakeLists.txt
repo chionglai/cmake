@@ -1,0 +1,64 @@
+
+
+# Replace all fiels in <...>:
+# 1. exec_name: Name for the executable
+# 2. exe_desc: Description for the executable
+# 3. version_no: Version number
+# 4. list of path to required libraries headers: List of directories
+#    to search for header files.
+# 5. list of path to required libraries: List of directories to search
+#    for libraries
+# 6. list of required libraries: List of required libraries
+set(EXE_NAME <exe_name>)
+set(EXE_DESC "<exe_desc>")
+set(EXE_VER <version_no>)
+set(INC_PATHS <list of path to required libraries headers>)
+set(LIB_PATHS <list of path to required libraries>)
+set(IMPORTED_LIB <list of required libraries>)
+
+# END setup - Do not modify pass this line
+
+# Required cmake min version
+cmake_minimum_required(VERSION 3.9)
+
+# Project info
+project(${EXE_NAME} VERSION ${EXE_VER} DESCRIPTION ${EXE_DESC})
+
+# Change default install prefix
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX bin CACHE PATH "No comment" FORCE)
+endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+# Add source
+file(GLOB SOURCES src/*.cpp)
+add_executable(${EXE_NAME} ${SOURCES})
+
+# Include search directories for libraries headers
+include_directories(${INC_PATHS})
+
+# Find all required libraries and link to this project
+find_library(mylib ${IMPORTED_LIB} PATHS ${LIB_PATHS})
+target_link_libraries(${EXE_NAME} ${mylib})
+
+# Set target output executable files and version
+set_target_properties(${EXE_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
+    VERSION ${PROJECT_VERSION}
+)
+
+# Include top directory for compilation
+target_include_directories(${EXE_NAME} PRIVATE inc)
+target_include_directories(${EXE_NAME} PRIVATE src)
+
+# Include GNUInstallDirs to use variables CMAKE_INSTALL*DIR
+include(GNUInstallDirs)
+
+# Declare files to install
+install(TARGETS ${EXE_NAME}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+# Add rule to expand @ macros only
+configure_file(${EXE_NAME}.pc.in ${EXE_NAME}.pc @ONLY)
+
+# Install generated file
+install(FILES ${CMAKE_BINARY_DIR}/${EXE_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
