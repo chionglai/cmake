@@ -4,14 +4,16 @@
 # 1. exec_name: Name for the executable
 # 2. exe_desc: Description for the executable
 # 3. version_no: Version number
-# 4. list of path to required libraries headers: List of directories
+# 4. extra_c_flag: Extra compile flags to be passed to cmake. e.g. "-std=c++11"
+# 5. list of path to required libraries headers: List of directories
 #    to search for header files.
-# 5. list of path to required libraries: List of directories to search
+# 6. list of path to required libraries: List of directories to search
 #    for libraries
-# 6. list of required libraries: List of required libraries
+# 7. list of required libraries: List of required libraries
 set(EXE_NAME <exe_name>)
 set(EXE_DESC "<exe_desc>")
 set(EXE_VER <version_no>)
+set(EXTRA_COMPILE_FLAG "<extra_c_flag>")
 set(INC_PATHS <list of path to required libraries headers>)
 set(LIB_PATHS <list of path to required libraries>)
 set(IMPORTED_LIB <list of required libraries>)
@@ -23,6 +25,10 @@ cmake_minimum_required(VERSION 3.9)
 
 # Project info
 project(${EXE_NAME} VERSION ${EXE_VER} DESCRIPTION ${EXE_DESC})
+
+# Set additional compile flag for both C and C++
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_COMPILE_FLAG}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_COMPILE_FLAG}")
 
 # Change default install prefix
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
